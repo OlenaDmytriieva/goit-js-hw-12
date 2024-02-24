@@ -45,19 +45,21 @@ form.addEventListener('submit', async e => {
       } else {
         createGallery(images, false);
         loaderElement.style.display = 'none';
-        showLoadMoreButton();
-        if (page > totalPages) {
-          iziToast.error({
-            title: 'Error',
+        if (page === totalPages) {
+          hideLoadMoreButton();
+          iziToast.info({
+            title: 'Info',
             titleColor: '#FFF',
             messageColor: '#FFF',
             message:
               "We're sorry, but you've reached the end of search results.",
             position: 'topRight',
-            backgroundColor: '#EF4040',
+            backgroundColor: '#0099FF',
             theme: 'dark',
             timeout: 5000,
           });
+        } else {
+          showLoadMoreButton();
         }
       }
     } catch (error) {
@@ -91,6 +93,20 @@ loadMoreBtn.addEventListener('click', async () => {
     if (images.length > 0) {
       createGallery(images, true);
       showLoadMoreButton();
+
+      if (page === totalPages) {
+        hideLoadMoreButton();
+        iziToast.info({
+          title: 'Info',
+          titleColor: '#FFF',
+          messageColor: '#FFF',
+          message: "We're sorry, but you've reached the end of search results.",
+          position: 'topRight',
+          backgroundColor: '#0099FF',
+          theme: 'dark',
+          timeout: 5000,
+        });
+      }
     } else {
       hideLoadMoreButton();
     }

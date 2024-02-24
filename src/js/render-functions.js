@@ -46,6 +46,12 @@ export function createGallery(images, append) {
   } else {
     myGallery.innerHTML = result;
   }
+  const galleryElement = document.querySelector('.box');
+  const height = galleryElement.getBoundingClientRect().height;
+  window.scrollBy({
+    top: height * 2,
+    behavior: 'smooth',
+  });
 
   let gallery = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
@@ -57,6 +63,7 @@ export function createGallery(images, append) {
 }
 
 export const loadMoreBtn = document.querySelector('.load-more-button');
+
 export function showLoadMoreButton() {
   loadMoreBtn.style.display = 'block';
 }
