@@ -75,7 +75,15 @@ async function handleQuery(e) {
 
   loaderElement.style.display = 'block';
   hideLoadMoreButton();
-  const data = await queryPixabay(query, page, limit);
+  let data;
+  try {
+    data = await queryPixabay(query, page, limit);
+  } catch (error) {
+    console.error('Error:', error);
+    showToast('Something went wrong', 'error');
+    loaderElement.style.display = 'none';
+    return;
+  }
   loaderElement.style.display = 'none';
 
   if (data.hits.length == 0) {
