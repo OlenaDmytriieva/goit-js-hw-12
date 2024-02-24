@@ -1,5 +1,8 @@
 import { queryPixabay } from './js/pixabay-api';
 import { createGallery } from './js/render-functions';
+import { showLoadMoreButton } from './js/render-functions';
+import { hideLoadMoreButton } from './js/render-functions';
+import { loadMoreBtn } from './js/render-functions';
 
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
@@ -7,37 +10,60 @@ import 'izitoast/dist/css/iziToast.min.css';
 const form = document.querySelector('.search-form');
 const loaderElement = document.querySelector('.loader');
 
-form.addEventListener('submit', e => {
+let page = 1;
+let limit = 15;
+let totalPages;
+let currentQuery = '';
+
+form.addEventListener('submit', async e => {
   e.preventDefault();
   const query = form.querySelector('input').value.trim();
 
   if (query) {
     loaderElement.style.display = 'block';
+    if (currentQuery !== query) {
+      page = 1;
+    }
+    currentQuery = query;
 
-    queryPixabay(query)
-      .then(data => {
-        const images = data.hits;
-        if (images.length === 0) {
+    try {
+      const data = await queryPixabay(query, page, limit);
+      const images = data.hits;
+      totalPages = Math.ceil(data.totalHits / limit);
+      if (images.length === 0) {
+        iziToast.error({
+          title: 'Error',
+          titleColor: '#FFF',
+          messageColor: '#FFF',
+          message:
+            'Sorry, there are no images matching your search query. Please try again!',
+          backgroundColor: '#EF4040',
+          position: 'topRight',
+          theme: 'dark',
+          timeout: 5000,
+        });
+      } else {
+        createGallery(images, false);
+        loaderElement.style.display = 'none';
+        showLoadMoreButton();
+        if (page > totalPages) {
           iziToast.error({
             title: 'Error',
             titleColor: '#FFF',
             messageColor: '#FFF',
             message:
-              'Sorry, there are no images matching your search query. Please try again!',
-            backgroundColor: '#EF4040',
+              "We're sorry, but you've reached the end of search results.",
             position: 'topRight',
+            backgroundColor: '#EF4040',
             theme: 'dark',
             timeout: 5000,
           });
-        } else {
-          createGallery(images);
         }
-        loaderElement.style.display = 'none';
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        loaderElement.style.display = 'none';
-      });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      loaderElement.style.display = 'none';
+    }
   } else {
     iziToast.warning({
       title: 'Caution',
@@ -49,6 +75,28 @@ form.addEventListener('submit', e => {
       theme: 'dark',
       timeout: 5000,
     });
+    loaderElement.style.display = 'none';
+  }
+});
+
+loadMoreBtn.addEventListener('click', async () => {
+  loaderElement.style.display = 'block';
+  hideLoadMoreButton();
+  page++;
+
+  try {
+    const data = await queryPixabay(currentQuery, page, limit);
+    const images = data.hits;
+
+    if (images.length > 0) {
+      createGallery(images, true);
+      showLoadMoreButton();
+    } else {
+      hideLoadMoreButton();
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
     loaderElement.style.display = 'none';
   }
 });

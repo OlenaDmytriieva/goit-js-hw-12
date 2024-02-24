@@ -1,7 +1,7 @@
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
-export function createGallery(images) {
+export function createGallery(images, append) {
   const myGallery = document.querySelector('.gallery');
   const result = images
     .map(image => {
@@ -41,7 +41,11 @@ export function createGallery(images) {
     })
     .join('\n');
 
-  myGallery.innerHTML = result;
+  if (append) {
+    myGallery.insertAdjacentHTML('beforeend', result);
+  } else {
+    myGallery.innerHTML = result;
+  }
 
   let gallery = new SimpleLightbox('.gallery a', {
     captionDelay: 250,
@@ -50,4 +54,13 @@ export function createGallery(images) {
 
   gallery.on('show.simplelightbox', function () {});
   gallery.refresh();
+}
+
+export const loadMoreBtn = document.querySelector('.load-more-button');
+export function showLoadMoreButton() {
+  loadMoreBtn.style.display = 'block';
+}
+
+export function hideLoadMoreButton() {
+  loadMoreBtn.style.display = 'none';
 }

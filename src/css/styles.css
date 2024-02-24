@@ -32,6 +32,13 @@ button {
   height: 40px;
 }
 
+.load-more-button {
+  width: 125px;
+  height: 40px;
+  margin: 32px auto 44px auto;
+  display: none;
+}
+
 form {
   display: flex;
   gap: 8px;
@@ -156,7 +163,7 @@ ul {
   position: relative;
   box-sizing: border-box;
   animation: rotation 2s linear infinite;
-  margin: 0 auto;
+  margin: 24px auto;
 }
 .loader::after {
   content: '';

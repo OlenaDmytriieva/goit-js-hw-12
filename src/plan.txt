@@ -1,0 +1,28 @@
+
+page = 0
+cur_query = ''
+page_size = 20
+
+-----  function ---------
+page++;
+
+query = read_query
+if query != cur_query
+  page = 1
+cur_query = query
+
+show loader and hide show more button
+images, total_hist = api_call(query, page, page_size)
+hide loader
+render_images(images, add: page > 1)
+
+total_pages = total_hist / page_size
+
+if total_pages == page
+ // last page
+ show message about the last page
+ else
+ // not last page
+ show the load more button
+ scroll 2 images down if page > 1
+ end
