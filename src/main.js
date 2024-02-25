@@ -21,6 +21,7 @@ form.addEventListener('submit', async e => {
 
   if (query) {
     loaderElement.style.display = 'block';
+    hideLoadMoreButton();
     if (currentQuery !== query) {
       page = 1;
     }
@@ -42,6 +43,7 @@ form.addEventListener('submit', async e => {
           theme: 'dark',
           timeout: 5000,
         });
+        createGallery(images, false);
       } else {
         createGallery(images, false);
         loaderElement.style.display = 'none';
@@ -63,7 +65,6 @@ form.addEventListener('submit', async e => {
         }
       }
     } catch (error) {
-      console.error('Error:', error);
       loaderElement.style.display = 'none';
     }
   } else {
@@ -111,7 +112,16 @@ loadMoreBtn.addEventListener('click', async () => {
       hideLoadMoreButton();
     }
   } catch (error) {
-    console.error('Error:', error);
+    iziToast.error({
+      title: 'Error',
+      titleColor: '#FFF',
+      messageColor: '#FFF',
+      message: 'Something went wrong :(',
+      position: 'topRight',
+      backgroundColor: '#EF4040',
+      theme: 'dark',
+      timeout: 5000,
+    });
   } finally {
     loaderElement.style.display = 'none';
   }
